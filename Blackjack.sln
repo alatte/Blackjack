@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack", "Blackjack\Blackjack.csproj", "{546192DA-B9E4-4C70-ACBE-A16CB13428C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Entities", "Blackjack.Entities\Blackjack.Entities.csproj", "{E26814ED-B9EE-408D-A1BE-C34041450987}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Output", "Blackjack.Output\Blackjack.Output.csproj", "{F4F90519-3754-40C0-992E-E972C9F2F89A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{546192DA-B9E4-4C70-ACBE-A16CB13428C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{546192DA-B9E4-4C70-ACBE-A16CB13428C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{546192DA-B9E4-4C70-ACBE-A16CB13428C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E26814ED-B9EE-408D-A1BE-C34041450987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E26814ED-B9EE-408D-A1BE-C34041450987}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E26814ED-B9EE-408D-A1BE-C34041450987}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E26814ED-B9EE-408D-A1BE-C34041450987}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4F90519-3754-40C0-992E-E972C9F2F89A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4F90519-3754-40C0-992E-E972C9F2F89A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4F90519-3754-40C0-992E-E972C9F2F89A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4F90519-3754-40C0-992E-E972C9F2F89A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

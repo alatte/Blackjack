@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Blackjack.Output;
 
-namespace Blackjack
+namespace Blackjack.Entities
 {
     abstract class Person
     {
@@ -12,15 +8,17 @@ namespace Blackjack
         internal Hand hand;
         internal bool status;
         internal bool blackjack;
+        internal IOutput output;
 
-        internal abstract void Action(Deck deck);
+        internal abstract void TurnAction(Deck deck);
 
-        internal Person(string name)
+        internal Person(string name, IOutput output)
         {
             this.name = name;
+            this.output = output;
             hand = new Hand();
             status = true;
-            blackjack = false;
+            blackjack = false;           
         }
 
         internal void DealCards(Deck deck)
@@ -28,18 +26,16 @@ namespace Blackjack
             hand.AddCard(deck.GetCard());
             hand.AddCard(deck.GetCard());
 
-            Console.WriteLine($"{name} cards: ");
-            hand.WriteCards();
+            hand.WriteCards(name, output);
             blackjack = hand.CheckBlackjack();
         }
 
-        internal  void TakeCard(Deck deck)
+        internal void TakeCard(Deck deck)
         {
             hand.AddCard(deck.GetCard());
-            Console.WriteLine($"{name} take a card: ");
-            hand.WriteCards();
+            hand.WriteCards(name, output);
 
-            Console.WriteLine($"{name} points = {hand.CheckSum()}");
+            output.ShowMessage(StringSource.PointsInHand(name, hand.CheckSum()));
             if (hand.IsItDefeat())
             {
                 status = false;

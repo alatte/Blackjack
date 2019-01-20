@@ -3,21 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blackjack.Entities;
+using Blackjack.Output;
 
-namespace Blackjack
+namespace Blackjack.Entities
 {
-    class Game
+    public class Game
     {
         Deck deck;
-        internal Game()
+        IOutput output;       
+
+        public Game(bool output)
         {
             deck = new Deck();
+            if (output)
+                this.output = new AlertOutput();
+            else this.output = new ConsoleOutput();
         }
 
-        internal void Play()
+        public void Play(string playerName, double playerMoney)
         {
-            Dealer dealer = new Dealer();
-            Player player = new Player();
+            Dealer dealer = new Dealer(output);
+            Player player = new Player(playerName, playerMoney, output);
             player.DealCards(deck);
             dealer.DealCards(deck);
 
@@ -26,25 +33,26 @@ namespace Blackjack
             while (dealer.status || player.status)
             {
                 if (player.status)
-                    player.Action(deck);
+                    player.TurnAction(deck);
 
-                if (dealer.status)
-                    dealer.Action(deck);
+                if (dealer.status && !player.hand.IsItDefeat())
+                    dealer.TurnAction(deck);
+                else break;
             }
 
             WhoIsWinner(dealer, player);            
         }
 
-        internal void IsAnybodyHasBlackjack (Person first, Person second)
+        private void IsAnybodyHasBlackjack (Person first, Person second)
         {
             second.status = false;
             first.status = false;
             if (first.blackjack && !second.blackjack)
-                Console.WriteLine($"====={first.name} get BlackJack=====");
+                output.ShowMessage(StringSource.Blackjack(first.name));
             else if (!first.blackjack && second.blackjack)
-                Console.WriteLine($"====={second.name} get BlackJack=====");
+                output.ShowMessage(StringSource.Blackjack(second.name));
             else if (first.blackjack && second.blackjack)
-                Console.WriteLine("=====Two BlackJacks. Not bad=====");
+                output.ShowMessage(StringSource.Blackjack("Both"));
             else
             {               
                 first.status = true;
@@ -52,32 +60,22 @@ namespace Blackjack
             }
         }
 
-        internal void WhoIsWinner(Person first, Person second)
+        private void WhoIsWinner(Person first, Person second)
         {
             //Ничего лучше у меня не получилось придумать
             if (first.hand.IsItDefeat() && !second.hand.IsItDefeat())
-                Console.WriteLine($"====={second.name} win=====");
+                output.ShowMessage(StringSource.Winner(second.name));
             else if (second.hand.IsItDefeat() && !first.hand.IsItDefeat())
-                Console.WriteLine($"====={first.name} win=====");
-            else if (second.hand.IsItDefeat() && first.hand.IsItDefeat())
-                Console.WriteLine("=====Dva loha. Nobody wins=====");
+                output.ShowMessage(StringSource.Winner(first.name));
             else
             {
                 if (first.hand.CheckSum() > second.hand.CheckSum())
-                    Console.WriteLine($"====={first.name} win=====");
+                    output.ShowMessage(StringSource.Winner(first.name)); 
                 else if (first.hand.CheckSum() < second.hand.CheckSum())
-                    Console.WriteLine($"====={second.name} win=====");
+                    output.ShowMessage(StringSource.Winner(second.name));
                 else if (first.hand.CheckSum() == second.hand.CheckSum())
-                    Console.WriteLine("=====Push=====");
+                    output.ShowMessage(StringSource.Winner("Nobody"));
             }
-        }
-    }
-
-    static class ListExtensions
-    {
-        public static List<T> Clone<T>(this List<T> listToClone) where T : ICloneable
-        {
-            return listToClone.Select(item => (T)item.Clone()).ToList();
         }
     }
 }
