@@ -6,19 +6,26 @@ using System.Threading.Tasks;
 
 namespace Blackjack
 {
-    class Player
+    class Player : Person
     {
-        internal string name { get; }
-        internal List<string> cards { get; set; }
-        internal bool status { get; set; }
-        internal double money { get; set; }
+        internal Player()
+            : base("You") { }
 
-        internal Player(string name)
+
+        internal override void Action(Deck deck)
         {
-            this.name = name;
-            cards = new List<string>();
-            money = 1000;
-            status = true;
+            Console.WriteLine("Take card? (Y/N)");
+            string answer = Console.ReadLine().ToUpper();
+            if (answer == "N")
+                status = false;
+
+            else if (answer == "Y")
+            {
+                TakeCard(deck);
+            }
+
+            else Console.WriteLine("Unknown command");
         }
+
     }
 }
