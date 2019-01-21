@@ -54,6 +54,10 @@
       <Project>{e26814ed-b9ee-408d-a1be-c34041450987}</Project>
       <Name>Blackjack.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Blackjack.Output\Blackjack.Output.csproj">
+      <Project>{f4f90519-3754-40c0-992e-e972c9f2f89a}</Project>
+      <Name>Blackjack.Output</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

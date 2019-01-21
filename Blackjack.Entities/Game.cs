@@ -1,80 +1,124 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Blackjack.Entities;
-using Blackjack.Output;
+﻿using Blackjack.Output;
+using System;
 
 namespace Blackjack.Entities
 {
     public class Game
     {
-        Deck deck;
-        IOutput output;       
+        Deck Deck;
+        IOutput Output;       
 
-        public Game(bool output)
+        public Game(IOutput output)
         {
-            deck = new Deck();
-            if (output)
-                this.output = new AlertOutput();
-            else this.output = new ConsoleOutput();
+            Deck = new Deck();
+            this.Output = output;
         }
 
         public void Play(string playerName, double playerMoney)
         {
-            Dealer dealer = new Dealer(output);
-            Player player = new Player(playerName, playerMoney, output);
-            player.DealCards(deck);
-            dealer.DealCards(deck);
+            Dealer dealer = new Dealer();
+            Player player = new Player(playerName, playerMoney);
+            player.DealCards(Deck);
+            dealer.DealCards(Deck);
+            GetPersonCards(player);
+            GetPersonCards(dealer);
 
             IsAnybodyHasBlackjack(dealer, player);
 
-            while (dealer.status || player.status)
+            while (dealer.Status || player.Status)
             {
-                if (player.status)
-                    player.TurnAction(deck);
+                if (player.Status)
+                {
+                    PlayerTurn(player);
+                    GetPersonCards(player);
+                }
 
-                if (dealer.status && !player.hand.IsItDefeat())
-                    dealer.TurnAction(deck);
+                if (dealer.Status && !player.Hand.IsItDefeat())
+                {
+                    DealerTurn(dealer);
+                    GetPersonCards(dealer);
+                }
                 else break;
             }
 
             WhoIsWinner(dealer, player);            
         }
 
+        //Это портит СОЛИД, да?
+        //Хотя а был ли он здесь вообще?
+        private void PlayerTurn (Player player)
+        {
+            Output.PlayerTakeCard();
+            string answer = Console.ReadLine().ToUpper();
+            if (answer == "N")
+            {
+                Output.PersonCheck(player.Name);
+                player.Status = false;
+            }
+            else if (answer == "Y")
+            {
+                player.TakeCard(Deck);
+            }
+            else Output.UnknownCommand();
+        }
+
+        private void DealerTurn(Dealer dealer)
+        {
+            int dealerMustTake = 16;
+            if (dealer.Hand.CheckSum() <= dealerMustTake)
+            {
+                dealer.TakeCard(Deck);
+            }
+            else
+            {
+                Output.PersonCheck(dealer.Name);
+                dealer.Status = false;
+            }
+        }
+
+        private void GetPersonCards(Person person)
+        {
+            string[,] cardsArray = new string[person.Hand.Cards.Count,2];
+            for(int i = 0; i < person.Hand.Cards.Count; i++)
+            {
+                cardsArray[i, 0] = (person.Hand.Cards[i].Value).ToString();
+                cardsArray[i, 1] = (person.Hand.Cards[i].Suit).ToString();
+            }
+            Output.CardsInHand(person.Name, cardsArray);
+            Output.PointsInHand(person.Name, person.Hand.CheckSum());
+        }
+
         private void IsAnybodyHasBlackjack (Person first, Person second)
         {
-            second.status = false;
-            first.status = false;
-            if (first.blackjack && !second.blackjack)
-                output.ShowMessage(StringSource.Blackjack(first.name));
-            else if (!first.blackjack && second.blackjack)
-                output.ShowMessage(StringSource.Blackjack(second.name));
-            else if (first.blackjack && second.blackjack)
-                output.ShowMessage(StringSource.Blackjack("Both"));
+            second.Status = false;
+            first.Status = false;
+            if (first.Blackjack && !second.Blackjack)
+                Output.Blackjack(first.Name);
+            else if (!first.Blackjack && second.Blackjack)
+                Output.Blackjack(second.Name);
+            else if (first.Blackjack && second.Blackjack)
+                Output.Blackjack("Both");
             else
             {               
-                first.status = true;
-                second.status = true;
+                first.Status = true;
+                second.Status = true;
             }
         }
 
         private void WhoIsWinner(Person first, Person second)
         {
-            //Ничего лучше у меня не получилось придумать
-            if (first.hand.IsItDefeat() && !second.hand.IsItDefeat())
-                output.ShowMessage(StringSource.Winner(second.name));
-            else if (second.hand.IsItDefeat() && !first.hand.IsItDefeat())
-                output.ShowMessage(StringSource.Winner(first.name));
+            if (first.Hand.IsItDefeat() && !second.Hand.IsItDefeat())
+                Output.Winner(second.Name);
+            else if (second.Hand.IsItDefeat() && !first.Hand.IsItDefeat())
+                Output.Winner(first.Name);
             else
             {
-                if (first.hand.CheckSum() > second.hand.CheckSum())
-                    output.ShowMessage(StringSource.Winner(first.name)); 
-                else if (first.hand.CheckSum() < second.hand.CheckSum())
-                    output.ShowMessage(StringSource.Winner(second.name));
-                else if (first.hand.CheckSum() == second.hand.CheckSum())
-                    output.ShowMessage(StringSource.Winner("Nobody"));
+                if (first.Hand.CheckSum() > second.Hand.CheckSum())
+                    Output.Winner(first.Name); 
+                else if (first.Hand.CheckSum() < second.Hand.CheckSum())
+                    Output.Winner(second.Name);
+                else if (first.Hand.CheckSum() == second.Hand.CheckSum())
+                    Output.Winner("Nobody");
             }
         }
     }

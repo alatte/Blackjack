@@ -49,7 +49,6 @@
     <Compile Include="Person.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Blackjack.Output\Blackjack.Output.csproj">

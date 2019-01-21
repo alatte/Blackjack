@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Blackjack.Entities;
+using Blackjack.Output;
 
 namespace Blackjack
 {
@@ -10,13 +11,13 @@ namespace Blackjack
         {
             string playerName = GetPlayerName();
             double playerMoney = GetPlayerMoney();
-            bool useAlert = AlertOrConsole();
+            IOutput output = AlertOrConsole();
 
             do
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
                 Console.Clear();
-                Game game = new Game(useAlert);
+                Game game = new Game(output);
                 game.Play(playerName, playerMoney);
                 Console.WriteLine("Play again? (Y/N)");
             } while (Console.ReadLine().ToUpper() == "Y");
@@ -41,16 +42,16 @@ namespace Blackjack
             return money;
         }
 
-        private static bool AlertOrConsole()
+        private static IOutput AlertOrConsole()
         {
             while (true)
             {
                 Console.WriteLine("Use Alert instead of Console? (Y/N)");
                 string resp = Console.ReadLine().ToUpper();
                 if (resp == "Y")
-                    return true;
+                    return new AlertOutput();
                 else if (resp == "N")
-                    return false;
+                    return new ConsoleOutput();
                 else
                     Console.WriteLine("Unknown command");
             }

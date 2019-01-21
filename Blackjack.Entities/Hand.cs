@@ -1,27 +1,26 @@
-﻿using Blackjack.Output;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Blackjack.Entities
 {
     class Hand
     {
-        List<Card> cards;
-        int maxGameValue = 21;
+        internal List<Card> Cards;
+        int MaxGameValue = 21;
 
         internal Hand()
         {
-            cards = new List<Card>();
+            Cards = new List<Card>();
         }
 
         internal void AddCard(Card card)
         {
-            cards.Add(card);
+            Cards.Add(card);
         }
 
         internal bool IsItDefeat()
         {            
-            return CheckSum() > maxGameValue;
+            return CheckSum() > MaxGameValue;
         }
 
         internal int CheckSum()
@@ -29,9 +28,9 @@ namespace Blackjack.Entities
 
             int sum = 0;
 
-            foreach (Card card in cards)
+            foreach (Card card in Cards)
             {
-                sum += (int) card.value;
+                sum += (int) card.Value;
             }
 
             return sum;
@@ -39,16 +38,11 @@ namespace Blackjack.Entities
 
         internal bool CheckBlackjack()
         {
-            if (cards[0].value == cards[1].value && Enum.GetName(typeof(Deck.Values), cards[0].value) == "Jack" || CheckSum() == maxGameValue)
+            if (Cards[0].Value == Cards[1].Value && Enum.GetName(typeof(Deck.Values), Cards[0].Value) == "Jack" || CheckSum() == MaxGameValue)
             {
                 return true;
             }
             else return false;
-        }
-
-        internal void WriteCards(string name, IOutput output)
-        {
-            output.ShowMessage(StringSource.CardsInHand(name, cards));
         }
     }
 }

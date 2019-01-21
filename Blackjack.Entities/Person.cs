@@ -1,44 +1,33 @@
-﻿using Blackjack.Output;
-
-namespace Blackjack.Entities
+﻿namespace Blackjack.Entities
 {
     abstract class Person
     {
-        internal string name;
-        internal Hand hand;
-        internal bool status;
-        internal bool blackjack;
-        internal IOutput output;
+        internal string Name;
+        internal Hand Hand;
+        internal bool Status;
+        internal bool Blackjack;
 
-        internal abstract void TurnAction(Deck deck);
-
-        internal Person(string name, IOutput output)
+        internal Person(string name)
         {
-            this.name = name;
-            this.output = output;
-            hand = new Hand();
-            status = true;
-            blackjack = false;           
+            this.Name = name;
+            Hand = new Hand();
+            Status = true;
+            Blackjack = false;           
         }
 
         internal void DealCards(Deck deck)
         {
-            hand.AddCard(deck.GetCard());
-            hand.AddCard(deck.GetCard());
-
-            hand.WriteCards(name, output);
-            blackjack = hand.CheckBlackjack();
+            Hand.AddCard(deck.GetCard());
+            Hand.AddCard(deck.GetCard());
+            Blackjack = Hand.CheckBlackjack();
         }
 
         internal void TakeCard(Deck deck)
         {
-            hand.AddCard(deck.GetCard());
-            hand.WriteCards(name, output);
-
-            output.ShowMessage(StringSource.PointsInHand(name, hand.CheckSum()));
-            if (hand.IsItDefeat())
+            Hand.AddCard(deck.GetCard());           
+            if (Hand.IsItDefeat())
             {
-                status = false;
+                Status = false;
             }
         }
     }

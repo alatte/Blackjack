@@ -5,7 +5,7 @@ namespace Blackjack.Entities
 {
     class Deck
     {
-        List<Card> cards;
+        List<Card> Cards;
         internal enum Suits
         {
             Spades = 9824,
@@ -30,14 +30,13 @@ namespace Blackjack.Entities
             Ace = 11
         }
 
-
         internal Deck()
         {
-            cards = new List<Card>();
+            Cards = new List<Card>();
 
             foreach (int suit in Enum.GetValues(typeof(Suits)))
                 foreach (string value in Enum.GetNames(typeof(Values)))
-                    cards.Add(new Card((Values)Enum.Parse(typeof(Values), value), suit));
+                    Cards.Add(new Card((Values)Enum.Parse(typeof(Values), value), suit));
 
             MixDeck();
         }
@@ -45,18 +44,18 @@ namespace Blackjack.Entities
         internal void MixDeck()
         {
             Random rnd = new Random();
-            for (int i = 0; i < cards.Count; i++)
+            for (int i = 0; i < Cards.Count; i++)
             {
-                Card tmp = cards[0];
-                cards.RemoveAt(0);
-                cards.Insert(rnd.Next(cards.Count), tmp);
+                Card tmp = Cards[0];
+                Cards.RemoveAt(0);
+                Cards.Insert(rnd.Next(Cards.Count), tmp);
             }
         }
 
         internal Card GetCard()
         {
-            Card card = cards[0];
-            cards.Remove(cards[0]);
+            Card card = Cards[0];
+            Cards.Remove(Cards[0]);
             return card;
         }
     }

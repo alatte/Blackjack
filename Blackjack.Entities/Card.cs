@@ -2,13 +2,13 @@
 {
     class Card
     {
-        internal Deck.Values value { get; }
-        internal int suit { get; }
+        internal Deck.Values Value { get; }
+        internal int Suit { get; }
 
         internal Card(Deck.Values value, int suit)
         {
-            this.value = value;
-            this.suit = suit;
+            this.Value = value;
+            this.Suit = suit;
         }
        
     }

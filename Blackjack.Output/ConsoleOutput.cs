@@ -8,9 +8,10 @@ namespace Blackjack.Output
 {
     public class ConsoleOutput : IOutput
     {
-        public void ShowMessage(string messageText)
+        public override void ShowMessage(string messageText)
         {
             Console.WriteLine(messageText); 
         }
+       
     }
 }

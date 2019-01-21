@@ -9,7 +9,7 @@ namespace Blackjack.Output
 {
     public class AlertOutput : IOutput
     {
-        public void ShowMessage(string messageText)
+        public override void ShowMessage(string messageText)
         {
             MessageBox.Show(messageText);
         }
