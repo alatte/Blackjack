@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Blackjack.Output
 {
-    public class AlertOutput : IOutput
+    public class AlertOutput : AbstractOutput
     {
         public override void ShowMessage(string messageText)
         {

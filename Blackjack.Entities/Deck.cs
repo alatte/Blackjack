@@ -3,41 +3,15 @@ using System.Collections.Generic;
 
 namespace Blackjack.Entities
 {
-    class Deck
+    public class Deck
     {
-        List<Card> Cards;
-        internal enum Suits
-        {
-            Spades = 9824,
-            Clubs = 9827,
-            Hearts = 9829,
-            Diamonds = 9830
-        }
-        internal enum Values
-        {
-            Two = 2,
-            Three,
-            Four,
-            Five,
-            Six,
-            Seven,
-            Eight,
-            Nine,
-            Ten,
-            Jack = 10,
-            Queen = 10,
-            King = 10,
-            Ace = 11
-        }
-
-        internal Deck()
-        {
-            Cards = new List<Card>();
-
-            foreach (int suit in Enum.GetValues(typeof(Suits)))
-                foreach (string value in Enum.GetNames(typeof(Values)))
-                    Cards.Add(new Card((Values)Enum.Parse(typeof(Values), value), suit));
-
+        List<Card> Cards = new List<Card>();
+        
+        internal Deck(CardFactory factory)
+        {            
+            foreach (var card in factory.CreateDeck())
+                Cards.Add((Card)card);
+            
             MixDeck();
         }
 

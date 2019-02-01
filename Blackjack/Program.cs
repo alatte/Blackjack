@@ -11,7 +11,7 @@ namespace Blackjack
         {
             string playerName = GetPlayerName();
             double playerMoney = GetPlayerMoney();
-            IOutput output = AlertOrConsole();
+            Output.AbstractOutput output = AlertOrConsole();
 
             do
             {
@@ -42,7 +42,7 @@ namespace Blackjack
             return money;
         }
 
-        private static IOutput AlertOrConsole()
+        private static AbstractOutput AlertOrConsole()
         {
             while (true)
             {

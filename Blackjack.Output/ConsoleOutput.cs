@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blackjack.Output
 {
-    public class ConsoleOutput : IOutput
+    public class ConsoleOutput : AbstractOutput
     {
         public override void ShowMessage(string messageText)
         {

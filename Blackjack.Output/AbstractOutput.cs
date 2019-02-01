@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blackjack.Output
 {
-    public abstract class IOutput
+    public abstract class AbstractOutput
     {
         public abstract void ShowMessage(string messageText);
 

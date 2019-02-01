@@ -1,25 +1,36 @@
 ﻿using Blackjack.Output;
 using System;
+using System.Collections.Generic;
 
 namespace Blackjack.Entities
 {
-    public class Game
-    {
-        Deck Deck;
-        IOutput Output;       
 
-        public Game(IOutput output)
+    interface IObservable
+    {
+        void RegisterObserver(IObserver o);
+        void RemoveObserver(IObserver o);
+        void NotifyObservers(Person person, Deck deck);
+    }
+
+    public class Game : IObservable
+    {
+        Deck GameDeck;
+        AbstractOutput Output;
+        List<IObserver> observers;
+
+        public Game(AbstractOutput output)
         {
-            Deck = new Deck();
+            GameDeck = new Deck(new CardFactory());
+            observers = new List<IObserver>();
             this.Output = output;
         }
-
+           
         public void Play(string playerName, double playerMoney)
         {
-            Dealer dealer = new Dealer();
+            Dealer dealer = new Dealer(this);
             Player player = new Player(playerName, playerMoney);
-            player.DealCards(Deck);
-            dealer.DealCards(Deck);
+            NotifyObservers(player, GameDeck);
+            NotifyObservers(dealer, GameDeck);
             GetPersonCards(player);
             GetPersonCards(dealer);
 
@@ -57,7 +68,7 @@ namespace Blackjack.Entities
             }
             else if (answer == "Y")
             {
-                player.TakeCard(Deck);
+                NotifyObservers(player, GameDeck);
             }
             else Output.UnknownCommand();
         }
@@ -67,7 +78,7 @@ namespace Blackjack.Entities
             int dealerMustTake = 16;
             if (dealer.Hand.CheckSum() <= dealerMustTake)
             {
-                dealer.TakeCard(Deck);
+                NotifyObservers(dealer, GameDeck);
             }
             else
             {
@@ -119,6 +130,24 @@ namespace Blackjack.Entities
                     Output.Winner(second.Name);
                 else if (first.Hand.CheckSum() == second.Hand.CheckSum())
                     Output.Winner("Nobody");
+            }
+        }
+
+        public void RegisterObserver(IObserver o)
+        {
+            observers.Add(o);
+        }
+
+        public void RemoveObserver(IObserver o)
+        {
+            observers.Remove(o);
+        }
+
+        public void NotifyObservers(Person person, Deck deck)
+        {
+            foreach (IObserver o in observers)
+            {
+                o.Update(person, deck);
             }
         }
     }

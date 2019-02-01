@@ -38,7 +38,7 @@ namespace Blackjack.Entities
 
         internal bool CheckBlackjack()
         {
-            if (Cards[0].Value == Cards[1].Value && Enum.GetName(typeof(Deck.Values), Cards[0].Value) == "Jack" || CheckSum() == MaxGameValue)
+            if (Cards[0].Value == Cards[1].Value && Enum.GetName(typeof(Values), Cards[0].Value) == "Jack" || CheckSum() == MaxGameValue)
             {
                 return true;
             }
