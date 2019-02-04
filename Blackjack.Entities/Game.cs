@@ -4,33 +4,27 @@ using System.Collections.Generic;
 
 namespace Blackjack.Entities
 {
-
-    interface IObservable
+    public class Game : IObservable<Player>
     {
-        void RegisterObserver(IObserver o);
-        void RemoveObserver(IObserver o);
-        void NotifyObservers(Person person, Deck deck);
-    }
-
-    public class Game : IObservable
-    {
-        Deck GameDeck;
+        public static Deck GameDeck;
+        private List<IObserver<Player>> observers;
         AbstractOutput Output;
-        List<IObserver> observers;
 
         public Game(AbstractOutput output)
         {
             GameDeck = new Deck(new CardFactory());
-            observers = new List<IObserver>();
+            observers = new List<IObserver<Player>>();
             this.Output = output;
         }
-           
+
         public void Play(string playerName, double playerMoney)
         {
-            Dealer dealer = new Dealer(this);
+            Dealer dealer = new Dealer();
             Player player = new Player(playerName, playerMoney);
-            NotifyObservers(player, GameDeck);
-            NotifyObservers(dealer, GameDeck);
+            dealer.Subscribe(this);
+
+            NotifyObservers(player);
+            dealer.DealCards(dealer);
             GetPersonCards(player);
             GetPersonCards(dealer);
 
@@ -52,12 +46,12 @@ namespace Blackjack.Entities
                 else break;
             }
 
-            WhoIsWinner(dealer, player);            
+            WhoIsWinner(dealer, player);
         }
 
         //Это портит СОЛИД, да?
         //Хотя а был ли он здесь вообще?
-        private void PlayerTurn (Player player)
+        private void PlayerTurn(Player player)
         {
             Output.PlayerTakeCard();
             string answer = Console.ReadLine().ToUpper();
@@ -68,7 +62,7 @@ namespace Blackjack.Entities
             }
             else if (answer == "Y")
             {
-                NotifyObservers(player, GameDeck);
+                NotifyObservers(player);
             }
             else Output.UnknownCommand();
         }
@@ -78,7 +72,7 @@ namespace Blackjack.Entities
             int dealerMustTake = 16;
             if (dealer.Hand.CheckSum() <= dealerMustTake)
             {
-                NotifyObservers(dealer, GameDeck);
+                dealer.GiveCard(dealer);
             }
             else
             {
@@ -89,8 +83,8 @@ namespace Blackjack.Entities
 
         private void GetPersonCards(Person person)
         {
-            string[,] cardsArray = new string[person.Hand.Cards.Count,2];
-            for(int i = 0; i < person.Hand.Cards.Count; i++)
+            string[,] cardsArray = new string[person.Hand.Cards.Count, 2];
+            for (int i = 0; i < person.Hand.Cards.Count; i++)
             {
                 cardsArray[i, 0] = (person.Hand.Cards[i].Value).ToString();
                 cardsArray[i, 1] = (person.Hand.Cards[i].Suit).ToString();
@@ -99,7 +93,7 @@ namespace Blackjack.Entities
             Output.PointsInHand(person.Name, person.Hand.CheckSum());
         }
 
-        private void IsAnybodyHasBlackjack (Person first, Person second)
+        private void IsAnybodyHasBlackjack(Person first, Person second)
         {
             second.Status = false;
             first.Status = false;
@@ -110,7 +104,7 @@ namespace Blackjack.Entities
             else if (first.Blackjack && second.Blackjack)
                 Output.Blackjack("Both");
             else
-            {               
+            {
                 first.Status = true;
                 second.Status = true;
             }
@@ -125,7 +119,7 @@ namespace Blackjack.Entities
             else
             {
                 if (first.Hand.CheckSum() > second.Hand.CheckSum())
-                    Output.Winner(first.Name); 
+                    Output.Winner(first.Name);
                 else if (first.Hand.CheckSum() < second.Hand.CheckSum())
                     Output.Winner(second.Name);
                 else if (first.Hand.CheckSum() == second.Hand.CheckSum())
@@ -133,22 +127,36 @@ namespace Blackjack.Entities
             }
         }
 
-        public void RegisterObserver(IObserver o)
+        //IObservable parts
+        public IDisposable Subscribe(IObserver<Player> observer)
         {
-            observers.Add(o);
+            if (!observers.Contains(observer))
+                observers.Add(observer);
+            return new Unsubscriber(observers, observer);
         }
 
-        public void RemoveObserver(IObserver o)
+        private class Unsubscriber : IDisposable
         {
-            observers.Remove(o);
-        }
+            private List<IObserver<Player>> _observers;
+            private IObserver<Player> _observer;
 
-        public void NotifyObservers(Person person, Deck deck)
-        {
-            foreach (IObserver o in observers)
+            public Unsubscriber(List<IObserver<Player>> observers, IObserver<Player> observer)
             {
-                o.Update(person, deck);
+                this._observers = observers;
+                this._observer = observer;
             }
+
+            public void Dispose()
+            {
+                if (_observer != null && _observers.Contains(_observer))
+                    _observers.Remove(_observer);
+            }
+        }
+
+        private void NotifyObservers(Player player)
+        {
+            foreach (var observer in observers)
+                observer.OnNext(player);
         }
     }
 }

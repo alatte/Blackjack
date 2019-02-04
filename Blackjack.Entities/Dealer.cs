@@ -2,45 +2,58 @@
 
 namespace Blackjack.Entities
 {
-    class Dealer : Person, IObserver
+    public class Dealer : Person, IObserver<Player>
     {
-        IObservable Game;
+        private IDisposable unsubscriber;
 
-        internal Dealer(IObservable game) 
-            : base("Dealer")
-        {
-            Game = game;
-            Game.RegisterObserver(this);
-        }
+        public Dealer()
+            : base("Dealer") { }
        
-        private void DealCards(Person person, Deck deck)
+        public void DealCards(Person person)
         {
-            person.Hand.AddCard(deck.GetCard());
-            person.Hand.AddCard(deck.GetCard());
+            person.Hand.AddCard(Game.GameDeck.GetCard());
+            person.Hand.AddCard(Game.GameDeck.GetCard());
             person.Blackjack = person.Hand.CheckBlackjack();
         }
 
-        private void GiveCard(Person person, Deck deck)
+        public void GiveCard(Person person)
         {
-            person.Hand.AddCard(deck.GetCard());
+            person.Hand.AddCard(Game.GameDeck.GetCard());
             if (person.Hand.IsItDefeat())
             {
                 person.Status = false;
             }
         }
 
-        //Таки события это есть наблюдатель?
-        public void Update(Person person, Deck deck)
+        //IObserver parts
+        public virtual void Subscribe(IObservable<Player> player)
         {
-            if (person.Hand.Cards.Count == 0)
-                DealCards(person, deck);
-
-            else GiveCard(person, deck);          
+            if (player != null)
+                unsubscriber = player.Subscribe(this);
         }
-    }
 
-    public interface IObserver
-    {
-        void Update(Person person, Deck deck);
+        public void OnNext(Player player)
+        {
+            if (player.Hand.Cards.Count == 0)
+                DealCards(player);
+
+            else GiveCard(player);
+        }
+
+        public void OnError(Exception error)
+        {
+            Console.WriteLine("OnError");
+        }
+
+        public void OnCompleted()
+        {
+            Console.WriteLine("OnCompleted");
+            this.Unsubscribe();
+        }
+
+        public virtual void Unsubscribe()
+        {
+            unsubscriber.Dispose();
+        }
     }
 }

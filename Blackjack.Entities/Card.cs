@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Blackjack.Entities
 {
@@ -10,6 +12,7 @@ namespace Blackjack.Entities
         Hearts = 9829,
         Diamonds = 9830
     }
+    //А вот об этой ошибке я у тебя еще почти в самом начале спрашивала
     enum Values
     {
         Two = 2,
@@ -49,55 +52,5 @@ namespace Blackjack.Entities
             suit = factory.CreateSuit();
             value = factory.CreateValue();
         }
-     }*/
-
-    abstract class AbstractSuit
-    {
-        public abstract int GetSuit();
-    }
-    abstract class AbstractValue
-    {
-        public abstract Values GetValue();
-    }
-
-    class Suit : AbstractSuit
-    {
-        public override int GetSuit()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-    class Value : AbstractValue
-    {
-        public override Values GetValue()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    abstract class AbstractCardFactory
-    {
-        public abstract IEnumerable CreateDeck();     
-    }
-
-    class CardFactory : AbstractCardFactory
-    {
-        public AbstractSuit CreateSuit()
-        {
-            return new Suit();
-        }
-
-        public AbstractValue CreateValue()
-        {
-            return new Value();
-        }
-
-        public override IEnumerable CreateDeck()
-        {
-            foreach (int suit in Enum.GetValues(typeof(Suits)))
-                foreach (string value in Enum.GetNames(typeof(Values)))
-                    yield return new Card((Values)Enum.Parse(typeof(Values), value), suit);
-        }
-
-    }
+     }*/   
 }

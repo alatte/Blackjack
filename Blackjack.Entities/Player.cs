@@ -1,10 +1,10 @@
 ﻿namespace Blackjack.Entities
 {
-    class Player : Person
+    public class Player : Person
     {
         double Money;
 
-        internal Player(string name, double money)
+        public Player(string name, double money)
             : base(name)
         {
             this.Money = money;
