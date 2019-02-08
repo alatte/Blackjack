@@ -30,7 +30,9 @@ namespace Blackjack.Entities
 
             foreach (Card card in Cards)
             {
-                sum += (int) card.Value;
+                if (card.Value.ToString() == "Jack" || card.Value.ToString() == "Queen" || card.Value.ToString() == "King")
+                    sum += 10;
+                else sum += (int) card.Value;
             }
 
             return sum;

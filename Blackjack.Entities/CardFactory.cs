@@ -53,7 +53,6 @@ namespace Blackjack.Entities
             List<Suits> suits = CreateSuit().GetSuit();
             List<Values> values = CreateValue().GetValue();
 
-            //А так можно?
             return (values.SelectMany(value => suits, (value, suit) => new Card(value, (int)suit))).ToList();
         }
     }

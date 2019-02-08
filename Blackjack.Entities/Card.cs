@@ -12,7 +12,7 @@ namespace Blackjack.Entities
         Hearts = 9829,
         Diamonds = 9830
     }
-    //А вот об этой ошибке я у тебя еще почти в самом начале спрашивала
+
     enum Values
     {
         Two = 2,
@@ -24,10 +24,10 @@ namespace Blackjack.Entities
         Eight,
         Nine,
         Ten,
-        Jack = 10,
-        Queen = 10,
-        King = 10,
-        Ace = 11
+        Ace,
+        Jack,
+        Queen,
+        King
     }
 
     struct Card
@@ -41,16 +41,4 @@ namespace Blackjack.Entities
             this.Suit = suit;
         }      
     }
-
-    /*struct Card
-     {
-        private AbstractSuit suit;
-        private AbstractValue value;
-
-        public Card (CardFactory factory)
-        {
-            suit = factory.CreateSuit();
-            value = factory.CreateValue();
-        }
-     }*/   
 }

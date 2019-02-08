@@ -5,13 +5,11 @@ namespace Blackjack.Entities
 {
     public class Deck
     {
-        List<Card> Cards = new List<Card>();
+        List<Card> Cards;
         
         internal Deck(CardFactory factory)
         {            
-            foreach (var card in factory.CreateDeck())
-                Cards.Add((Card)card);
-            
+            Cards = factory.CreateDeck() as List<Card>;
             MixDeck();
         }
 
